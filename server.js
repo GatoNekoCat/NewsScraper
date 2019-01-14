@@ -33,7 +33,7 @@ app.use(bodyParser.urlencoded({
 
 // routes
 app.get("/", function (req, res) {
-    Article.find({ saved: false }, function (error, data) {
+    db.Article.find({ saved: false }, function (error, data) {
         var hbsObject = {
             article: data
         };
@@ -43,7 +43,7 @@ app.get("/", function (req, res) {
 });
 
 app.get("/saved", function (req, res) {
-    Article.find({ saved: true })
+    db.Article.find({ saved: true })
         .populate("notes")
         .exec(function (error, articles) {
             var hbsObject = {
@@ -80,7 +80,7 @@ app.get("/scrape", function (req, res) {
 });
 
 app.get("/articles", function (req, res) {
-    Article.find({}, function (error, doc) {
+    db.Article.find({}, function (error, doc) {
         if (error) {
             console.log(error);
         } else {
@@ -89,7 +89,7 @@ app.get("/articles", function (req, res) {
     });
 });
 app.get("/articles/:id", function (req, res) {
-    Article.findOne({ _id: req.params.id })
+    db.Article.findOne({ _id: req.params.id })
         .populate("note")
         .exec(function (error, doc) {
             if (error) {
@@ -100,7 +100,7 @@ app.get("/articles/:id", function (req, res) {
         });
 });
 app.post("/articles/save/:id", function (req, res) {
-    Article.findOneAndUpdate({ _id: req.params.id }, { saved: true })
+    db.Article.findOneAndUpdate({ _id: req.params.id }, { saved: true })
         .exec(function (err, doc) {
             if (err) {
                 console.log(error);
@@ -111,7 +111,7 @@ app.post("/articles/save/:id", function (req, res) {
 });
 
 app.post("/articles/delete/:id", function (req, res) {
-    Article.findOneAndUpdate({ _id: req.params.id }, { saved: false, notes: [] })
+    db.Article.findOneAndUpdate({ _id: req.params.id }, { saved: false, notes: [] })
         .exec(function (err, doc) {
             if (err) {
                 console.log(err);
@@ -130,7 +130,7 @@ app.post("notes/save/:id", function (req, res) {
         if (error) {
             console.log(error);
         } else {
-            Article.findOneandUpdate(
+            db.Article.findOneandUpdate(
                 { _id: req.params.id },
                 { $push: { notes: note } })
                 .exec(function (err) {
